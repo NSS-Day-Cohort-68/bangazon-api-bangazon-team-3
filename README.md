@@ -25,10 +25,12 @@ sudo apt install libtiff5-dev libjpeg8-dev libopenjp2-7-dev zlib1g-dev \
 1. Clone this repository and change to the directory in the terminal.
 2. Run `poetry install`
 3. Run `poetry shell`
-4. Run migrations and install starter data with the `./seed_data.sh` script.
-5. Open the project in VS Code if you haven't yet.
-6. Ensure that the correct Python Interpreter is chosen in VS Code.
-7. Start your debugger.
+4. Run `pip install setuptools`
+5. If already installed, run `pip install --upgrade setuptools`
+6. Run migrations and install starter data with the `./seed_data.sh` script.
+7. Open the project in VS Code if you haven't yet.
+8. Ensure that the correct Python Interpreter is chosen in VS Code.
+9. Start your debugger.
 
 ## Postman Request Collection
 
