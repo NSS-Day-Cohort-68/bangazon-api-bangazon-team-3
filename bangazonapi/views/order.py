@@ -28,7 +28,7 @@ class OrderLineItemSerializer(serializers.HyperlinkedModelSerializer):
 class OrderSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for customer orders"""
 
-    line_items = OrderLineItemSerializer(many=True)
+    lineitems = OrderLineItemSerializer(many=True)
     total = serializers.SerializerMethodField()
 
     """Define a SerializerMethodField to represent payment_type by its name"""
@@ -44,12 +44,12 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             "payment_type_name",  # Use the SerializerMethodField instead of payment_type
             "customer",
             "total",
-            "line_items",
+            "lineitems",
         )
 
     def get_total(self, obj):
         total = 0
-        for item in obj.line_items.all():
+        for item in obj.lineitems.all():
             total += item.product.price
         return total
 
