@@ -31,6 +31,9 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
     lineitems = OrderLineItemSerializer(many=True)
     total = serializers.SerializerMethodField()
 
+    """Define a SerializerMethodField to represent payment_type by its name"""
+    payment_type_name = serializers.SerializerMethodField()
+
     class Meta:
         model = Order
         url = serializers.HyperlinkedIdentityField(view_name="order", lookup_field="id")
@@ -38,7 +41,7 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             "id",
             "url",
             "created_date",
-            "payment_type",
+            "payment_type_name",  # Use the SerializerMethodField instead of payment_type
             "customer",
             "total",
             "lineitems",
@@ -49,6 +52,12 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
         for item in obj.lineitems.all():
             total += item.product.price
         return total
+
+    def get_payment_type_name(self, obj):
+        """Access the related Payment object and return its name"""
+        if obj.payment_type:
+            return obj.payment_type.merchant_name
+        return None
 
 
 class Orders(ViewSet):
