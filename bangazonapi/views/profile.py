@@ -31,7 +31,7 @@ class Profile(ViewSet):
             Token 9ba45f09651c5b0c404f37a2d2572c026c146611
 
         @apiSuccess (200) {Number} id Profile id
-        @apiSuccess (200) {String} url URI of customer profile
+        @apiSuccess (200) {String} url URL of customer profile
         @apiSuccess (200) {Object} user Related user object
         @apiSuccess (200) {String} user.first_name Customer first name
         @apiSuccess (200) {String} user.last_name Customer last name
@@ -83,7 +83,7 @@ class Profile(ViewSet):
             }
         """
         try:
-            current_user = Customer.objects.get(user=4)
+            current_user = Customer.objects.get(user=request.auth.user)
             current_user.recommends = Recommendation.objects.filter(
                 recommender=current_user
             )
