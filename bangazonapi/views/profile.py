@@ -118,10 +118,16 @@ class Profile(ViewSet):
             """
             try:
                 open_order = Order.objects.get(customer=current_user, payment_type=None)
+                line_items = OrderProduct.objects.filter(order=open_order)
+                line_items.delete()
+                open_order = Order.objects.get(customer=current_user, payment_type=None)
                 lineitems = OrderProduct.objects.filter(order=open_order)
                 lineitems.delete()
                 open_order.delete()
             except Order.DoesNotExist as ex:
+                return Response(
+                    {"message": ex.args[0]}, status=status.HTTP_404_NOT_FOUND
+                )
                 return Response(
                     {"message": ex.args[0]}, status=status.HTTP_404_NOT_FOUND
                 )
@@ -182,17 +188,17 @@ class Profile(ViewSet):
             """
             try:
                 open_order = Order.objects.get(customer=current_user, payment_type=None)
-                lineitems = OrderProduct.objects.filter(order=open_order)
-                lineitems = LineItemSerializer(
-                    lineitems, many=True, context={"request": request}
+                line_items = OrderProduct.objects.filter(order=open_order)
+                line_items = LineItemSerializer(
+                    line_items, many=True, context={"request": request}
                 )
 
                 cart = {}
                 cart["order"] = OrderSerializer(
                     open_order, many=False, context={"request": request}
                 ).data
-                cart["order"]["lineitems"] = lineitems.data
-                cart["order"]["size"] = len(lineitems.data)
+                cart["order"]["line_items"] = line_items.data
+                cart["order"]["size"] = len(line_items.data)
 
             except Order.DoesNotExist as ex:
                 return Response(

@@ -27,6 +27,7 @@ class PaymentSerializer(serializers.HyperlinkedModelSerializer):
             "account_number",
             "expiration_date",
             "create_date",
+            "customer",
         )
 
 
