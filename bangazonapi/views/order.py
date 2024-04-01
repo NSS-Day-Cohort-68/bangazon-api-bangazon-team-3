@@ -45,6 +45,7 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             "customer",
             "total",
             "lineitems",
+            "payment_type",
         )
 
     def get_total(self, obj):
@@ -127,8 +128,14 @@ class Orders(ViewSet):
             HTTP/1.1 204 No Content
         """
         customer = Customer.objects.get(user=request.auth.user)
+
+        # Assuming request.data["payment_type"] contains the ID of the payment type
+        payment_type_id = request.data["payment_type"]
+        payment_type_instance = Payment.objects.get(pk=payment_type_id)
+
+        # Now assign the payment_type_instance to the payment_type field of the order
         order = Order.objects.get(pk=pk, customer=customer)
-        order.payment_type = request.data["payment_type"]
+        order.payment_type = payment_type_instance
         order.save()
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
@@ -166,9 +173,9 @@ class Orders(ViewSet):
         customer = Customer.objects.get(user=request.auth.user)
         orders = Order.objects.filter(customer=customer)
 
-        payment = self.request.query_params.get("payment_id", None)
+        payment = self.request.query_params.get("payment_type", None)
         if payment is not None:
-            orders = orders.filter(payment__id=payment)
+            orders = orders.filter(payment_id=payment)
 
         json_orders = OrderSerializer(orders, many=True, context={"request": request})
 
