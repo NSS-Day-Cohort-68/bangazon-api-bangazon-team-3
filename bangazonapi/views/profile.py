@@ -128,9 +128,6 @@ class Profile(ViewSet):
                 return Response(
                     {"message": ex.args[0]}, status=status.HTTP_404_NOT_FOUND
                 )
-                return Response(
-                    {"message": ex.args[0]}, status=status.HTTP_404_NOT_FOUND
-                )
 
             return Response({}, status=status.HTTP_204_NO_CONTENT)
 
@@ -249,7 +246,7 @@ class Profile(ViewSet):
             """
 
             try:
-                open_order = Order.objects.get(customer=current_user)
+                open_order = Order.objects.get(customer=current_user, payment_type=None)
                 print(open_order)
             except Order.DoesNotExist as ex:
                 open_order = Order()
