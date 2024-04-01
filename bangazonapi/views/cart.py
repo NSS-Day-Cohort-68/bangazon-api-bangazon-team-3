@@ -28,7 +28,7 @@ class Cart(ViewSet):
             open_order = Order.objects.get(
                 customer=current_user, payment_type__isnull=True
             )
-        except Order.DoesNotExist:
+        except Order.DoesNotExist as ex:
             open_order = Order()
             open_order.created_date = datetime.datetime.now()
             open_order.customer = current_user
@@ -54,7 +54,7 @@ class Cart(ViewSet):
         current_user = Customer.objects.get(user=request.auth.user)
         open_order = Order.objects.get(customer=current_user, payment_type=None)
 
-        line_item = OrderProduct.objects.filter(product__id=pk, order=open_order)[0]
+        line_item = OrderProduct.objects.filter(product_id=pk, order=open_order)[0]
         line_item.delete()
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)

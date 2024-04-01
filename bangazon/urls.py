@@ -25,7 +25,6 @@ urlpatterns = [
     path("", include(router.urls)),
     path("register", register_user),
     path("login", login_user),
-    path("cart/add_to_cart/", Cart.as_view({"post": "create"}), name="add_to_cart"),
     path("api-token-auth", obtain_auth_token),
     path("api-auth", include("rest_framework.urls", namespace="rest_framework")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
