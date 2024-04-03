@@ -56,7 +56,6 @@ class Cart(ViewSet):
 
         line_item = OrderProduct.objects.filter(product_id=pk, order=open_order)[0]
         line_item.delete()
-
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
     def list(self, request):
