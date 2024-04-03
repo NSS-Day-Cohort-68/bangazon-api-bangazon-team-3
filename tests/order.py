@@ -120,7 +120,7 @@ class OrderTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-        # Get cart and verify product was added
+        # Get cart and verify payment was added
         url = "/orders/1"
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
         response = self.client.get(url, None, format="json")
@@ -132,3 +132,11 @@ class OrderTests(APITestCase):
         )
 
     # TODO: New line item is not added to closed order
+
+    def test_add_product_to_open_order_only(self):
+
+        self.test_add_product_to_order()
+
+        self.test_add_payment_type_to_order()
+
+        self.test_add_product_to_order()
