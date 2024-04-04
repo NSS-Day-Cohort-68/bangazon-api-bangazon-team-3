@@ -3,13 +3,10 @@ from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
 from bangazonapi.models import Store, Customer
-from .product import ProductSerializer
 
 
 class StoreSerializer(serializers.ModelSerializer):
     """JSON serializer for stores"""
-
-    # products = ProductSerializer(Many=True)
 
     class Meta:
         model = Store
@@ -17,8 +14,7 @@ class StoreSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "description",
-            "customer",
-            # "products",
+            "customer_id",
         )
 
 
@@ -55,6 +51,7 @@ class Stores(ViewSet):
                 "customer" :
                 {
                     "customer_id": "http://localhost:8000/customers/1",
+                    #! THIS EXAMPLE STORE OBJECT NEEDS COMPLETING
                 }
             }
         """
