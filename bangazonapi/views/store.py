@@ -79,7 +79,6 @@ class Stores(ViewSet):
         serializer = StoreSerializer(new_store, context={"request": request})
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
 
     def retrieve(self, request, pk=None):
         """
@@ -156,7 +155,7 @@ class Stores(ViewSet):
                 ]
             }
         """
-        
+
         try:
             customer = Customer.objects.get(user=request.auth.user)
             store = Store.objects.get(pk=pk, customer=customer)
@@ -170,6 +169,44 @@ class Stores(ViewSet):
                 },
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+        except Exception as ex:
+            return HttpResponseServerError(ex)
+
+    def list(self, request):
+        """
+        @api {GET} /orders GET customer orders
+        @apiName GetOrders
+        @apiGroup Orders
+
+        @apiHeader {String} Authorization Auth token
+        @apiHeaderExample {String} Authorization
+            Token 9ba45f09651c5b0c404f37a2d2572c026c146611
+
+        @apiParam {id} payment_id Query param to filter by payment used
+
+        @apiSuccess (200) {Object[]} orders Array of order objects
+        @apiSuccess (200) {id} orders.id Order id
+        @apiSuccess (200) {String} orders.url Order URI
+        @apiSuccess (200) {String} orders.created_date Date order was created
+        @apiSuccess (200) {String} orders.payment_type Payment URI
+        @apiSuccess (200) {String} orders.customer Customer URI
+
+        @apiSuccessExample {json} Success
+            [
+                {
+                    "id": 1,
+                    "url": "http://localhost:8000/orders/1",
+                    "created_date": "2019-08-16",
+                    "payment_type": "http://localhost:8000/paymenttypes/1",
+                    "customer": "http://localhost:8000/customers/5"
+                }
+            ]
+        """
+        try:
+            store = Store.objects.all()
+            serializer = StoreSerializer(store, many=True, context={"request": request})
+            return Response(serializer.data)
 
         except Exception as ex:
             return HttpResponseServerError(ex)
