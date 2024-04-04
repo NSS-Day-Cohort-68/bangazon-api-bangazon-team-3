@@ -120,7 +120,7 @@ class OrderTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-        # Get cart and verify product was added
+        # Get cart and verify payment was added
         url = "/orders/1"
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
         response = self.client.get(url, None, format="json")
