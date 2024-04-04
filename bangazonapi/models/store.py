@@ -15,3 +15,12 @@ class Store(SafeDeleteModel):
     customer = models.ForeignKey(
         Customer, on_delete=models.DO_NOTHING, related_name="stores"
     )
+
+
+    @property
+    def seller(self):
+        return self.customer.user
+    
+    @property
+    def products(self):
+        return self.customer.products
