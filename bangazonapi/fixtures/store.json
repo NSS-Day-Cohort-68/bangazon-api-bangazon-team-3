@@ -1,0 +1,20 @@
+[
+  {
+    "model": "bangazonapi.store",
+    "pk": 1,
+    "fields": {
+      "name": "Steve's Store",
+      "description": "I sell my WaReZ",
+      "customer_id": 4
+    }
+  },
+  {
+    "model": "bangazonapi.store",
+    "pk": 2,
+    "fields": {
+      "name": "Bob's Store",
+      "description": "I just started my store",
+      "customer_id": 8
+    }
+  }
+]
