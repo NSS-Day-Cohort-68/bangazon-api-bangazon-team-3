@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from bangazonapi.models.recommendation import Recommendation
 import base64
 from django.core.files.base import ContentFile
+from django.core.exceptions import ValidationError
 from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
@@ -127,11 +128,17 @@ class Products(ViewSet):
         except ValidationError as e:
             return Response({"error": e.messages}, status=status.HTTP_400_BAD_REQUEST)
 
-        new_product.save()
+        try:
+            new_product.full_clean()
 
-        serializer = ProductSerializer(new_product, context={"request": request})
+            new_product.save()
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+            serializer = ProductSerializer(new_product, context={"request": request})
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        except ValidationError as e:
+            return Response({"error": e.messages}, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk=None):
         """
