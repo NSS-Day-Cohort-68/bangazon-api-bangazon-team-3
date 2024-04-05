@@ -6,6 +6,7 @@ from bangazonapi.models import Store, Customer
 from django.contrib.auth.models import User
 from django.http import HttpResponseServerError
 from .product import ProductSerializer
+from .productcategory import ProductCategorySerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -25,7 +26,14 @@ class StoreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Store
-        fields = ("id", "name", "description", "customer_id", "seller", "products")
+        fields = (
+            "id",
+            "name",
+            "description",
+            "customer_id",
+            "seller",
+            "products",
+        )
 
 
 class Stores(ViewSet):

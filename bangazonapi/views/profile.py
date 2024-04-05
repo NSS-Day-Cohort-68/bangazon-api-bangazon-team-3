@@ -8,11 +8,12 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
-from bangazonapi.models import Order, Customer, Product
+from bangazonapi.models import Order, Customer, Product, Store
 from bangazonapi.models import OrderProduct, Favorite
 from bangazonapi.models import Recommendation
 from .product import ProductSerializer
 from .order import OrderSerializer
+from .store import StoreSerializer
 
 
 class Profile(ViewSet):
@@ -266,6 +267,27 @@ class Profile(ViewSet):
             return Response(line_item_json.data)
 
         return Response({}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    @action(methods=["get"], detail=False)
+    def store(self, request):
+
+        current_user = Customer.objects.get(user=request.auth.user)
+
+        if request.method == "GET":
+            try:
+                store = Store.objects.get(customer=current_user)
+
+                serializer = StoreSerializer(
+                    store, many=False, context={"request": request}
+                )
+
+                return Response(serializer.data)
+
+            except Store.DoesNotExist:
+                pass
+                # return Response(
+                #     {"message": ex.args[0]}, status=status.HTTP_404_NOT_FOUND
+                # )
 
     @action(methods=["get"], detail=False)
     def favoritesellers(self, request):
