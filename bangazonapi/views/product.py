@@ -12,6 +12,7 @@ from rest_framework import status
 from bangazonapi.models import Product, Customer, ProductCategory
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.core.exceptions import ValidationError
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -120,6 +121,11 @@ class Products(ViewSet):
             )
 
             new_product.image_path = data
+        try:
+            new_product.full_clean()
+
+        except ValidationError as e:
+            return Response({"error": e.messages}, status=status.HTTP_400_BAD_REQUEST)
 
         new_product.save()
 
