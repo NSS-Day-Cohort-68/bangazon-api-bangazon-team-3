@@ -122,11 +122,6 @@ class Products(ViewSet):
             )
 
             new_product.image_path = data
-        try:
-            new_product.full_clean()
-
-        except ValidationError as e:
-            return Response({"error": e.messages}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             new_product.full_clean()
