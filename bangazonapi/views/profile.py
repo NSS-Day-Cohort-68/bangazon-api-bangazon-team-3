@@ -284,10 +284,10 @@ class Profile(ViewSet):
                 return Response(serializer.data)
 
             except Store.DoesNotExist:
-                pass
-                # return Response(
-                #     {"message": ex.args[0]}, status=status.HTTP_404_NOT_FOUND
-                # )
+                return Response(
+                    {"message": "Store does not exist"},
+                    status=status.HTTP_204_NO_CONTENT,
+                )
 
     @action(methods=["get"], detail=False)
     def favoritesellers(self, request):
