@@ -10,7 +10,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from bangazonapi.models import Product, Customer, ProductCategory, ProductRating
+from bangazonapi.models import Product, Customer, ProductCategory, ProductRating, ProductLike
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.exceptions import ValidationError
@@ -358,3 +358,18 @@ class Products(ViewSet):
             return Response(None, status=status.HTTP_204_NO_CONTENT)
 
         return Response(None, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    @action(methods=["post"], detail=True)
+    def like(self, request, pk=None):
+        """Like a product"""
+
+        if request.method == "POST":
+            like = ProductLike()
+            like.customer = Customer.objects.get(user=request.auth.user)
+            like.product = Product.objects.get(pk=pk)
+
+            like.save()
+
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+
+        return Response({}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
