@@ -10,7 +10,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from bangazonapi.models import Product, Customer, ProductCategory
+from bangazonapi.models import Product, Customer, ProductCategory, ProductRating
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.exceptions import ValidationError
@@ -326,6 +326,22 @@ class Products(ViewSet):
         )
 
         return Response(serializer.data)
+
+    @action(methods=["post"], detail=True)
+    def rate_product(self, request, pk=None):
+
+        if request.method == "POST":
+            rate = ProductRating()
+            rate.product = Product.objects.get(pk=pk)
+            rate.customer = Customer.objects.get(user=request.auth.user)
+            rate.rating = request.data["rating"]
+            rate.review = request.data["review"]
+
+            rate.save()
+
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+
+        return Response(None, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     @action(methods=["post"], detail=True)
     def recommend(self, request, pk=None):

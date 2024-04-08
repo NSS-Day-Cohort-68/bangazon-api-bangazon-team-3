@@ -5,7 +5,8 @@
     "fields": {
       "product": 50,
       "customer": 4,
-      "rating": 4
+      "rating": 2,
+      "review": "This car is a LEMON"
     }
   },
   {
@@ -14,7 +15,8 @@
     "fields": {
       "product": 50,
       "customer": 5,
-      "rating": 3
+      "rating": 1,
+      "review": "I can even get the thing started!"
     }
   },
   {
@@ -23,7 +25,8 @@
     "fields": {
       "product": 50,
       "customer": 6,
-      "rating": 5
+      "rating": 2,
+      "review": "What a hunk-o-junk"
     }
   },
   {
@@ -32,7 +35,8 @@
     "fields": {
       "product": 50,
       "customer": 7,
-      "rating": 1
+      "rating": 1,
+      "review": "Rust everywhere!!"
     }
   }
 ]
