@@ -339,7 +339,7 @@ class Products(ViewSet):
 
             rate.save()
 
-            return Response(None, status=status.HTTP_204_NO_CONTENT)
+            return Response(None, status=status.HTTP_201_CREATED)
 
         return Response(None, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
