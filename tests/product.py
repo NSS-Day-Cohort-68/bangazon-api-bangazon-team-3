@@ -102,7 +102,7 @@ class ProductTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(json_response), 3)
 
-    # TODO: Delete product
+    # # TODO: Delete product
 
     def test_delete_product(self):
 
@@ -117,3 +117,54 @@ class ProductTests(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
         response = self.client.get(url, None, format="json")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_rate_product(self):
+        """
+        Ensure we can create a new product.
+        """
+        url = "/products"
+        data = {
+            "name": "Kite",
+            "price": 14.99,
+            "quantity": 60,
+            "description": "It flies high",
+            "category_id": 1,
+            "location": "Pittsburgh",
+        }
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
+        response = self.client.post(url, data, format="json")
+        json_response = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(json_response["name"], "Kite")
+        self.assertEqual(json_response["price"], 14.99)
+        self.assertEqual(json_response["quantity"], 60)
+        self.assertEqual(json_response["description"], "It flies high")
+        self.assertEqual(json_response["location"], "Pittsburgh")
+
+        """
+        Ensure we can rate the product
+        """
+        url = "/products/1/rate_product"
+        data = {
+            "rating": 1,
+            "review": "I don't like this",
+            "customer_id": 1,
+            "product_id": 1,
+        }
+
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
+        response = self.client.post(url, data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        """
+        Ensure rating exists via average_rating on product object/dictionary
+        """
+        url = "/products/1"
+
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
+        response = self.client.get(url, None, format="json")
+        json_response = json.loads(response.content)
+
+        self.assertNotEqual(json_response["average_rating"], 0)
