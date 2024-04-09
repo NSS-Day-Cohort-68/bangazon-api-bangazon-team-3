@@ -358,3 +358,21 @@ class Products(ViewSet):
             return Response(None, status=status.HTTP_204_NO_CONTENT)
 
         return Response(None, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    @action(detail=False, methods=["get"])
+    def list_with_categories(self, request):
+        """
+        Show category headers and the first five items in each category
+        """
+        products_by_category = {}
+        categories = ProductCategory.objects.all()
+        for category in categories:
+            products = Product.objects.filter(category=category).order_by(
+                "-created_date"
+            )[:5]
+            serializer = ProductSerializer(
+                products, many=True, context={"request": request}
+            )
+            products_by_category[category.name] = serializer.data
+
+        return Response(products_by_category, status=status.HTTP_200_OK)
