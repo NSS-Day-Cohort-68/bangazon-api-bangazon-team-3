@@ -6,6 +6,7 @@ from .customer import Customer
 from .productcategory import ProductCategory
 from .orderproduct import OrderProduct
 from .productrating import ProductRating
+from .productlike import ProductLike
 
 
 class Product(SafeDeleteModel):
@@ -85,6 +86,14 @@ class Product(SafeDeleteModel):
         except ZeroDivisionError:
             avg = 0
         return avg
+    
+    @property
+    def likes(self):
+        """likes of a property"""
+
+
+        likes = ProductLike.objects.filter(product=self)
+        return likes
 
     class Meta:
         verbose_name = "product"
