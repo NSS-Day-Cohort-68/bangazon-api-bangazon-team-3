@@ -6,6 +6,7 @@ from .customer import Customer
 from .productcategory import ProductCategory
 from .orderproduct import OrderProduct
 from .productrating import ProductRating
+from .productlike import ProductLike
 
 
 class Product(SafeDeleteModel):
@@ -85,7 +86,7 @@ class Product(SafeDeleteModel):
         except ZeroDivisionError:
             avg = 0
         return avg
-
+    
     class Meta:
         verbose_name = "product"
         verbose_name_plural = "products"

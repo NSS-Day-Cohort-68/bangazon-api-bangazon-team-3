@@ -10,7 +10,13 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from bangazonapi.models import Product, Customer, ProductCategory, ProductRating
+from bangazonapi.models import (
+    Product,
+    Customer,
+    ProductCategory,
+    ProductRating,
+    ProductLike,
+)
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.exceptions import ValidationError
@@ -34,6 +40,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "average_rating",
             "can_be_rated",
             "category",
+            "likes",
         )
         depth = 1
 
@@ -376,3 +383,66 @@ class Products(ViewSet):
             products_by_category[category.name] = serializer.data
 
         return Response(products_by_category, status=status.HTTP_200_OK)
+
+    @action(methods=["post", "delete"], detail=True)
+    def like(self, request, pk=None):
+        """Like a product"""
+
+        if request.method == "POST":
+            like = ProductLike()
+            like.customer = Customer.objects.get(user=request.auth.user)
+            like.product = Product.objects.get(pk=pk)
+
+            like.save()
+
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+
+
+        """Unlike a product"""
+        if request.method == "DELETE":
+
+            try:
+                product = Product.objects.get(pk=pk)
+                like = ProductLike.objects.get(
+                    product=product, customer__user=request.auth.user
+                )
+                like.delete()
+
+                return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+            except ProductLike.DoesNotExist as ex:
+                return Response(
+                    {"message": ex.args[0]}, status=status.HTTP_404_NOT_FOUND
+                )
+
+
+        return Response(
+            {"message": ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    @action(methods=["get"], detail=False)
+    def liked(self, request):
+        """Get all of the products that where liked by customer"""
+        if request.method == "GET":
+            try:
+                # Retrieve the authenticated customer
+                customer = Customer.objects.get(user=request.auth.user)
+                liked_products = ProductLike.objects.filter(customer=customer)
+
+                # Retrieve the related products for each liked product
+                products = [liked.product for liked in liked_products]
+
+                # Serialize the related products and return the response
+                serializer = ProductSerializer(products, many=True, context={"request": request})
+                return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+            except ProductLike.DoesNotExist:
+                return Response(
+                    {"message": "No liked products found for the user."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            
+        return Response(
+            {}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
