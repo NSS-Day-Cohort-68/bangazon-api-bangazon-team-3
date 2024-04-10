@@ -19,8 +19,16 @@
     "pk": 3,
     "model": "bangazonapi.favorite",
     "fields": {
-      "customer_id": 7,
-      "seller_id": 7
+      "customer_id": 4,
+      "seller_id": 8
+    }
+  },
+  {
+    "pk": 4,
+    "model": "bangazonapi.favorite",
+    "fields": {
+      "customer_id": 8,
+      "seller_id": 4
     }
   }
 ]
