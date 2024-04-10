@@ -80,6 +80,22 @@ class Profile(ViewSet):
                             }
                         }
                     }
+                ],
+                "recommended": [
+                    {
+                        "product": {
+                            "id": 50,
+                            "name": "Golf"
+                        },
+                        "customer": {
+                            "id": 4,
+                            "user": {
+                                "first_name": "Steve",
+                                "last_name": "Brownlee",
+                                "email": "steve@stevebrownlee.com"
+                            }
+                        }
+                    }
                 ]
             }
         """
@@ -414,7 +430,7 @@ class RecommenderSerializer(serializers.ModelSerializer):
             "product",
             "customer",
         )
-        
+
 
 class RecommendedSerializer(serializers.ModelSerializer):
 
@@ -427,6 +443,7 @@ class RecommendedSerializer(serializers.ModelSerializer):
             "product",
             "recommender",
         )
+
 
 class LikedProductSerializer(serializers.ModelSerializer):
     """JSON serializer for products"""
@@ -449,6 +466,7 @@ class LikedProductSerializer(serializers.ModelSerializer):
         )
         depth = 1
 
+
 class LikedSerializer(serializers.ModelSerializer):
     """JSON serializer for likes"""
 
@@ -461,6 +479,7 @@ class LikedSerializer(serializers.ModelSerializer):
             "customer",
             "product",
         )
+
 
 class ProfileSerializer(serializers.ModelSerializer):
     """JSON serializer for customer profile
