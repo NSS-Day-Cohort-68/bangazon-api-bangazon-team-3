@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from bangazonapi.models import Order, Customer, Product, Store
 from bangazonapi.models import OrderProduct, Favorite
-from bangazonapi.models import Recommendation
+from bangazonapi.models import Recommendation, ProductLike
 from .product import ProductSerializer
 from .order import OrderSerializer
 from .store import StoreSerializer
@@ -410,7 +410,40 @@ class RecommenderSerializer(serializers.ModelSerializer):
             "product",
             "customer",
         )
+        
+class LikedProductSerializer(serializers.ModelSerializer):
+    """JSON serializer for products"""
 
+    class Meta:
+        model = Product
+        fields = (
+            "id",
+            "name",
+            "price",
+            "number_sold",
+            "description",
+            "quantity",
+            "created_date",
+            "location",
+            "image_path",
+            "average_rating",
+            "can_be_rated",
+            "category",
+        )
+        depth = 1
+
+class LikedSerializer(serializers.ModelSerializer):
+    """JSON serializer for likes"""
+
+    product = LikedProductSerializer(many=False)
+
+    class Meta:
+        model = ProductLike
+        fields = (
+            "id",
+            "customer",
+            "product",
+        )
 
 class ProfileSerializer(serializers.ModelSerializer):
     """JSON serializer for customer profile
@@ -421,6 +454,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     user = UserSerializer(many=False)
     recommends = RecommenderSerializer(many=True)
+    likes = LikedSerializer(many=True)
 
     class Meta:
         model = Customer
@@ -432,6 +466,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             "address",
             "payment_types",
             "recommends",
+            "likes",
         )
         depth = 1
 

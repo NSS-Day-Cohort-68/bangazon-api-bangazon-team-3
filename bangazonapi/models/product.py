@@ -87,14 +87,6 @@ class Product(SafeDeleteModel):
             avg = 0
         return avg
     
-    @property
-    def likes(self):
-        """likes of a property"""
-
-
-        likes = ProductLike.objects.filter(product=self)
-        return likes
-
     class Meta:
         verbose_name = "product"
         verbose_name_plural = "products"

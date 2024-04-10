@@ -7,7 +7,7 @@ class ProductLike(models.Model):
         "Product", on_delete=models.CASCADE, related_name="likes"
     )
     customer = models.ForeignKey(
-        Customer, on_delete=models.DO_NOTHING, related_name="liked_products"
+        Customer, on_delete=models.DO_NOTHING, related_name="likes"
     )
 
     class Meta:
