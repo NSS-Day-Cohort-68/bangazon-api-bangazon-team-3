@@ -26,3 +26,11 @@ class Customer(models.Model):
     @recommended.setter
     def recommended(self, value):
         self.__recommended = value
+
+    @property
+    def favorite_sellers(self):
+        return self.__favorite_sellers
+
+    @favorite_sellers.setter
+    def favorite_sellers(self, value):
+        self.__favorite_sellers = value

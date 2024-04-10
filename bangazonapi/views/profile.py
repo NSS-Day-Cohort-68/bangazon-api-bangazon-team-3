@@ -109,6 +109,14 @@ class Profile(ViewSet):
                 customer=current_user
             )
 
+            current_user.favorite_sellers = Favorite.objects.filter(
+                customer=current_user
+            )
+
+            # current_user.favorite_stores = Store.objects.filter(
+            #     customer=current_user.favorite_seller.store
+            # )
+
             serializer = ProfileSerializer(
                 current_user, many=False, context={"request": request}
             )
@@ -309,61 +317,94 @@ class Profile(ViewSet):
                     status=status.HTTP_204_NO_CONTENT,
                 )
 
-    @action(methods=["get"], detail=False)
+    @action(methods=["get", "post"], detail=False)
     def favoritesellers(self, request):
-        """
-        @api {GET} /profile/favoritesellers GET favorite sellers
-        @apiName GetFavoriteSellers
-        @apiGroup UserProfile
 
-        @apiHeader {String} Authorization Auth token
-        @apiHeaderExample {String} Authorization
-            Token 9ba45f09651c5b0c404f37a2d2572c026c146611
+        if request.method == "GET":
+            """
+            @api {GET} /profile/favoritesellers GET favorite sellers
+            @apiName GetFavoriteSellers
+            @apiGroup UserProfile
 
-        @apiSuccess (200) {id} id Favorite id
-        @apiSuccess (200) {Object} seller Favorited seller
-        @apiSuccess (200) {String} seller.url Seller URI
-        @apiSuccess (200) {String} seller.phone_number Seller phone number
-        @apiSuccess (200) {String} seller.address Seller address
-        @apiSuccess (200) {String} seller.user Seller user profile URI
-        @apiSuccessExample {json} Success
-            [
-                {
-                    "id": 1,
-                    "seller": {
-                        "url": "http://localhost:8000/customers/5",
-                        "phone_number": "555-1212",
-                        "address": "100 Endless Way",
-                        "user": "http://localhost:8000/users/6"
-                    }
-                },
-                {
-                    "id": 2,
-                    "seller": {
-                        "url": "http://localhost:8000/customers/6",
-                        "phone_number": "555-1212",
-                        "address": "100 Dauntless Way",
-                        "user": "http://localhost:8000/users/7"
-                    }
-                },
-                {
-                    "id": 3,
-                    "seller": {
-                        "url": "http://localhost:8000/customers/7",
-                        "phone_number": "555-1212",
-                        "address": "100 Indefatiguable Way",
-                        "user": "http://localhost:8000/users/8"
-                    }
-                }
-            ]
-        """
-        customer = Customer.objects.get(user=request.auth.user)
-        favorites = Favorite.objects.filter(customer=customer)
+            @apiHeader {String} Authorization Auth token
+            @apiHeaderExample {String} Authorization
+                Token 9ba45f09651c5b0c404f37a2d2572c026c146611
 
-        serializer = FavoriteSerializer(
-            favorites, many=True, context={"request": request}
-        )
-        return Response(serializer.data)
+            @apiSuccess (200) {id} id Favorite id
+            @apiSuccess (200) {Object} seller Favorited seller
+            @apiSuccess (200) {String} seller.url Seller URI
+            @apiSuccess (200) {String} seller.phone_number Seller phone number
+            @apiSuccess (200) {String} seller.address Seller address
+            @apiSuccess (200) {String} seller.user Seller user profile URI
+            @apiSuccessExample {json} Success
+                [
+                    {
+                        "id": 1,
+                        "seller": {
+                            "url": "http://localhost:8000/customers/5",
+                            "phone_number": "555-1212",
+                            "address": "100 Endless Way",
+                            "user": "http://localhost:8000/users/6"
+                        }
+                    },
+                    {
+                        "id": 2,
+                        "seller": {
+                            "url": "http://localhost:8000/customers/6",
+                            "phone_number": "555-1212",
+                            "address": "100 Dauntless Way",
+                            "user": "http://localhost:8000/users/7"
+                        }
+                    },
+                    {
+                        "id": 3,
+                        "seller": {
+                            "url": "http://localhost:8000/customers/7",
+                            "phone_number": "555-1212",
+                            "address": "100 Indefatiguable Way",
+                            "user": "http://localhost:8000/users/8"
+                        }
+                    }
+                ]
+            """
+            customer = Customer.objects.get(user=request.auth.user)
+            favorites = Favorite.objects.filter(customer=customer)
+
+            serializer = FavoriteSerializer(
+                favorites, many=True, context={"request": request}
+            )
+            return Response(serializer.data)
+
+        if request.method == "POST":
+
+            # Extract the store_id from request data
+            store_id = request.data.get("store_id")
+
+            # Check if store_id is provided
+            if not store_id:
+                return Response(
+                    {"error": "Store ID is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            try:
+                # Retrieve the store object
+                store = Store.objects.get(id=store_id)
+            except Store.DoesNotExist:
+                return Response(
+                    {"error": "Store does not exist"}, status=status.HTTP_404_NOT_FOUND
+                )
+
+            # Retrieve the seller associated with the store
+            seller = store.customer
+
+            # Create a Favorite entry for the current user and the seller
+            customer = Customer.objects.get(user=request.auth.user)
+            favorite = Favorite.objects.create(customer=customer, seller=seller)
+
+            # Serialize the created favorite and return in response
+            serializer = FavoriteSerializer(favorite, context={"request": request})
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class LineItemSerializer(serializers.HyperlinkedModelSerializer):
@@ -415,6 +456,7 @@ class ProfileProductSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "name",
+            "price",
         )
 
 
@@ -481,34 +523,6 @@ class LikedSerializer(serializers.ModelSerializer):
         )
 
 
-class ProfileSerializer(serializers.ModelSerializer):
-    """JSON serializer for customer profile
-
-    Arguments:
-        serializers
-    """
-
-    user = UserSerializer(many=False)
-    recommends = RecommenderSerializer(many=True)
-    recommended = RecommendedSerializer(many=True)
-    likes = LikedSerializer(many=True)
-
-    class Meta:
-        model = Customer
-        fields = (
-            "id",
-            "url",
-            "user",
-            "phone_number",
-            "address",
-            "payment_types",
-            "recommends",
-            "recommended",
-            "likes",
-        )
-        depth = 1
-
-
 class FavoriteUserSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for favorite sellers user
 
@@ -549,8 +563,44 @@ class FavoriteSerializer(serializers.HyperlinkedModelSerializer):
     """
 
     seller = FavoriteSellerSerializer(many=False)
+    store = serializers.SerializerMethodField()
 
     class Meta:
         model = Favorite
-        fields = ("id", "seller")
+        fields = ("id", "seller", "store")
         depth = 2
+
+    def get_store(self, obj):
+        store = Store.objects.filter(customer=obj.seller)
+        serialized_store = StoreSerializer(store, many=True)
+        return serialized_store.data
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    """JSON serializer for customer profile
+
+    Arguments:
+        serializers
+    """
+
+    user = UserSerializer(many=False)
+    recommends = RecommenderSerializer(many=True)
+    recommended = RecommendedSerializer(many=True)
+    likes = LikedSerializer(many=True)
+    favorite_sellers = FavoriteSerializer(many=True)
+
+    class Meta:
+        model = Customer
+        fields = (
+            "id",
+            "url",
+            "user",
+            "phone_number",
+            "address",
+            "payment_types",
+            "recommends",
+            "recommended",
+            "likes",
+            "favorite_sellers",
+        )
+        depth = 1

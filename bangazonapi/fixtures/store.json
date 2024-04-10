@@ -16,5 +16,14 @@
       "description": "I just started my store",
       "customer_id": 8
     }
+  },
+  {
+    "model": "bangazonapi.store",
+    "pk": 3,
+    "fields": {
+      "name": "Brenda's Store",
+      "description": "MY STORE",
+      "customer_id": 7
+    }
   }
 ]
