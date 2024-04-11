@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Favorite Sellers Report</title>
+    <header>Favorite Sellers Report</header>
+  </head>
+  <body>
+    <div class="report-container">
+      <h1 class="customer-name">
+        {{customer.user.first_name}} {{customer.user.last_name}}
+      </h1>
+      <ul class="seller-list">
+        {% for favorite in favorite_sellers %}
+        <li class="seller-item">
+          {{favorite.seller.user.first_name}} {{favorite.seller.user.last_name}}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </body>
+</html>

@@ -1,16 +1,17 @@
 """View module for handling requests about products"""
 
 from rest_framework.decorators import action
-from bangazonapi.models.recommendation import Recommendation
-import base64
+from django.shortcuts import render
 from django.core.files.base import ContentFile
 from django.core.exceptions import ValidationError
 from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
+import base64
 from rest_framework import serializers
 from rest_framework import status
-from django.shortcuts import render
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from bangazonapi.models.recommendation import Recommendation
 from bangazonapi.models import (
     Product,
     Customer,
@@ -18,7 +19,6 @@ from bangazonapi.models import (
     ProductRating,
     ProductLike,
 )
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.exceptions import ValidationError
 
@@ -444,6 +444,16 @@ class Products(ViewSet):
                 )
 
         return Response({}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# ++   /$$$$$$$  /$$$$$$$$ /$$$$$$$   /$$$$$$  /$$$$$$$  /$$$$$$$$ /$$$$$$
+# ++  | $$__  $$| $$_____/| $$__  $$ /$$__  $$| $$__  $$|__  $$__//$$__  $$
+# ++  | $$  \ $$| $$      | $$  \ $$| $$  \ $$| $$  \ $$   | $$  | $$  \__/
+# ++  | $$$$$$$/| $$$$$   | $$$$$$$/| $$  | $$| $$$$$$$/   | $$  |  $$$$$$
+# ++  | $$__  $$| $$__/   | $$____/ | $$  | $$| $$__  $$   | $$   \____  $$
+# ++  | $$  \ $$| $$      | $$      | $$  | $$| $$  \ $$   | $$   /$$  \ $$
+# ++  | $$  | $$| $$$$$$$$| $$      |  $$$$$$/| $$  | $$   | $$  |  $$$$$$/
+# ++  |__/  |__/|________/|__/       \______/ |__/  |__/   |__/   \______/
 
 
 def expensive_products_report(request):
