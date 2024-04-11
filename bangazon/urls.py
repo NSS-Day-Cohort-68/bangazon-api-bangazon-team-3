@@ -40,4 +40,9 @@ urlpatterns = [
         inexpensive_products_report,
         name="inexpensive_products_report",
     ),
+    path(
+        "reports/favoritesellers",
+        favorite_sellers_by_customer_report,
+        name="favorite_sellers_by_customer_report",
+    ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

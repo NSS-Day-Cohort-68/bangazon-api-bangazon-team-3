@@ -2,6 +2,7 @@
 
 import datetime
 from django.http import HttpResponseServerError
+from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import serializers, status
 from rest_framework.decorators import action
@@ -604,3 +605,24 @@ class ProfileSerializer(serializers.ModelSerializer):
             "favorite_sellers",
         )
         depth = 1
+
+
+def favorite_sellers_by_customer_report(request):
+
+    try:
+
+        customer_id = request.GET.get("customer")
+
+        favorite_sellers = Favorite.objects.filter(customer=customer_id)
+
+        customer = Customer.objects.get(pk=customer_id)
+
+        return render(
+            request,
+            "favoritesellersbycustomer.html",
+            {"favorite_sellers": favorite_sellers, "customer": customer},
+        )
+
+    except Customer.DoesNotExist:
+
+        return render(request, "error.html")
