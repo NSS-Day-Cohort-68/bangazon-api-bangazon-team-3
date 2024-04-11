@@ -448,15 +448,19 @@ class Products(ViewSet):
 
 def expensive_products_report(request):
     expensive_products = Product.objects.filter(price__gte=1000)
-    expensive_products_data = [
-        {
-            "id": product.id,
-            "name": product.name,
-            "price": product.price,
-        }
-        for product in expensive_products
-    ]
-    context = {"products": expensive_products_data}
+
     return render(
-        request, "expensive_products_report.html", "expensive_products", context
+        request,
+        "expensiveproducts.html",
+        {"expensive_products": expensive_products},
+    )
+
+
+def inexpensive_products_report(request):
+    inexpensive_products = Product.objects.filter(price__lte=999)
+
+    return render(
+        request,
+        "inexpensiveproducts.html",
+        {"inexpensive_products": inexpensive_products},
     )

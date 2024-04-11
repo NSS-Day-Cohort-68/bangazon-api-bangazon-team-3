@@ -6,6 +6,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from bangazonapi.models import *
 from bangazonapi.views import *
 from bangazonapi.views import expensive_products_report
+from bangazonapi.views import inexpensive_products_report
 
 # pylint: disable=invalid-name
 router = routers.DefaultRouter(trailing_slash=False)
@@ -33,5 +34,10 @@ urlpatterns = [
         "reports/expensiveproducts",
         expensive_products_report,
         name="expensive_products_report",
+    ),
+    path(
+        "reports/inexpensiveproducts",
+        inexpensive_products_report,
+        name="inexpensive_products_report",
     ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
