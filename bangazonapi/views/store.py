@@ -165,12 +165,11 @@ class Stores(ViewSet):
         """
 
         try:
-            customer = Customer.objects.get(user=request.auth.user)
-            store = Store.objects.get(pk=pk, customer=customer)
+            store = Store.objects.get(pk=pk)
             serializer = StoreSerializer(store, context={"request": request})
             return Response(serializer.data)
 
-        except Store.DoesNotExist as ex:
+        except Store.DoesNotExist:
             return Response(
                 {
                     "message": "The requested store does not exist, or you do not have permission to access it."

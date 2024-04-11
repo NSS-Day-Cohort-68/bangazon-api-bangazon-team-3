@@ -28,9 +28,9 @@ class Customer(models.Model):
         self.__recommended = value
 
     @property
-    def favorite_stores(self):
-        return self.__favorite_stores
+    def favorite_sellers(self):
+        return self.__favorite_sellers
 
-    @favorite_stores.setter
-    def favorite_stores(self, value):
-        self.__favorite_stores = value
+    @favorite_sellers.setter
+    def favorite_sellers(self, value):
+        self.__favorite_sellers = value

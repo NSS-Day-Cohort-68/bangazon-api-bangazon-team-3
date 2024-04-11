@@ -453,7 +453,11 @@ class ProfileProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ("id", "name", "price")
+        fields = (
+            "id",
+            "name",
+            "price",
+        )
 
 
 class RecommenderSerializer(serializers.ModelSerializer):
