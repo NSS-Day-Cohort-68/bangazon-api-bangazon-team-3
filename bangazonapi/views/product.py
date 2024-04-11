@@ -10,6 +10,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
+from django.shortcuts import render
 from bangazonapi.models import (
     Product,
     Customer,
@@ -397,7 +398,6 @@ class Products(ViewSet):
 
             return Response(None, status=status.HTTP_204_NO_CONTENT)
 
-
         """Unlike a product"""
         if request.method == "DELETE":
 
@@ -414,7 +414,6 @@ class Products(ViewSet):
                 return Response(
                     {"message": ex.args[0]}, status=status.HTTP_404_NOT_FOUND
                 )
-
 
         return Response(
             {"message": ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -433,16 +432,31 @@ class Products(ViewSet):
                 products = [liked.product for liked in liked_products]
 
                 # Serialize the related products and return the response
-                serializer = ProductSerializer(products, many=True, context={"request": request})
+                serializer = ProductSerializer(
+                    products, many=True, context={"request": request}
+                )
                 return Response(serializer.data, status=status.HTTP_200_OK)
-
 
             except ProductLike.DoesNotExist:
                 return Response(
                     {"message": "No liked products found for the user."},
-                    status=status.HTTP_404_NOT_FOUND
+                    status=status.HTTP_404_NOT_FOUND,
                 )
-            
-        return Response(
-            {}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+
+        return Response({}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+def expensive_products_report(request):
+    expensive_products = Product.objects.filter(price__gte=1000)
+    expensive_products_data = [
+        {
+            "id": product.id,
+            "name": product.name,
+            "price": product.price,
+        }
+        for product in expensive_products
+    ]
+    context = {"products": expensive_products_data}
+    return render(
+        request, "expensive_products_report.html", "expensive_products", context
+    )
