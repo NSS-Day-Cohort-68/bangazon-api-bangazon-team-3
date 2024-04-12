@@ -195,7 +195,7 @@
     "model": "bangazonapi.orderproduct",
     "pk": 24,
     "fields": {
-      "order_id": 3,
+      "order_id": 7,
       "product_id": 50
     }
   },
@@ -203,7 +203,7 @@
     "model": "bangazonapi.orderproduct",
     "pk": 25,
     "fields": {
-      "order_id": 3,
+      "order_id": 6,
       "product_id": 50
     }
   },
@@ -211,7 +211,7 @@
     "model": "bangazonapi.orderproduct",
     "pk": 26,
     "fields": {
-      "order_id": 3,
+      "order_id": 5,
       "product_id": 50
     }
   },
@@ -219,7 +219,7 @@
     "model": "bangazonapi.orderproduct",
     "pk": 27,
     "fields": {
-      "order_id": 3,
+      "order_id": 5,
       "product_id": 50
     }
   },
@@ -227,7 +227,7 @@
     "model": "bangazonapi.orderproduct",
     "pk": 28,
     "fields": {
-      "order_id": 3,
+      "order_id": 4,
       "product_id": 50
     }
   },
@@ -235,7 +235,7 @@
     "model": "bangazonapi.orderproduct",
     "pk": 29,
     "fields": {
-      "order_id": 3,
+      "order_id": 4,
       "product_id": 50
     }
   },
@@ -243,7 +243,7 @@
     "model": "bangazonapi.orderproduct",
     "pk": 30,
     "fields": {
-      "order_id": 3,
+      "order_id": 1,
       "product_id": 50
     }
   },
@@ -251,7 +251,7 @@
     "model": "bangazonapi.orderproduct",
     "pk": 31,
     "fields": {
-      "order_id": 3,
+      "order_id": 1,
       "product_id": 50
     }
   }

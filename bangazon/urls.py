@@ -7,6 +7,7 @@ from bangazonapi.models import *
 from bangazonapi.views import *
 from bangazonapi.views import expensive_products_report
 from bangazonapi.views import inexpensive_products_report
+from bangazonapi.views import orders_report
 
 # pylint: disable=invalid-name
 router = routers.DefaultRouter(trailing_slash=False)
@@ -45,4 +46,5 @@ urlpatterns = [
         favorite_sellers_by_customer_report,
         name="favorite_sellers_by_customer_report",
     ),
+    path('reports/orders', orders_report, name='orders_report'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
