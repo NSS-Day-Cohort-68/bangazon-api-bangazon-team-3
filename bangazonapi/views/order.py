@@ -9,6 +9,8 @@ from rest_framework import status
 from rest_framework.decorators import action
 from bangazonapi.models import Order, Payment, Customer, Product, OrderProduct
 from .product import ProductSerializer
+from django.shortcuts import render
+from django.db.models import Sum, F, Func
 
 
 class OrderLineItemSerializer(serializers.HyperlinkedModelSerializer):
@@ -180,3 +182,63 @@ class Orders(ViewSet):
         json_orders = OrderSerializer(orders, many=True, context={"request": request})
 
         return Response(json_orders.data)
+
+
+# ++   /$$$$$$$  /$$$$$$$$ /$$$$$$$   /$$$$$$  /$$$$$$$  /$$$$$$$$ /$$$$$$
+# ++  | $$__  $$| $$_____/| $$__  $$ /$$__  $$| $$__  $$|__  $$__//$$__  $$
+# ++  | $$  \ $$| $$      | $$  \ $$| $$  \ $$| $$  \ $$   | $$  | $$  \__/
+# ++  | $$$$$$$/| $$$$$   | $$$$$$$/| $$  | $$| $$$$$$$/   | $$  |  $$$$$$
+# ++  | $$__  $$| $$__/   | $$____/ | $$  | $$| $$__  $$   | $$   \____  $$
+# ++  | $$  \ $$| $$      | $$      | $$  | $$| $$  \ $$   | $$   /$$  \ $$
+# ++  | $$  | $$| $$$$$$$$| $$      |  $$$$$$/| $$  | $$   | $$  |  $$$$$$/
+# ++  |__/  |__/|________/|__/       \______/ |__/  |__/   |__/   \______/
+
+
+def orders_report(request):
+    orders_status = request.GET.get("status")
+
+    if orders_status not in ["complete", "incomplete"]:
+        return render(request, "error.html")
+
+    if orders_status == "complete":
+        try:
+            # Get all completed orders with total price
+            orders = (
+                Order.objects.filter(payment_type__isnull=False)
+                .annotate(total_price=Sum("lineitems__product__price"))
+                .order_by("id")
+            )
+
+            for order in orders:
+                order.total_price = round(order.total_price, 2)
+
+            return render(
+                request,
+                "completedorders.html",
+                {"orders": orders},
+            )
+
+        except Order.DoesNotExist:
+            return render(request, "error.html")
+
+    if orders_status == "incomplete":
+
+        try:
+            # Get all incomplete orders with total price
+            orders = (
+                Order.objects.filter(payment_type__isnull=True)
+                .annotate(total_price=(Sum("lineitems__product__price")))
+                .order_by("id")
+            )
+
+            for order in orders:
+                order.total_price = round(order.total_price, 2)
+
+            return render(
+                request,
+                "incompleteorders.html",
+                {"orders": orders},
+            )
+
+        except Order.DoesNotExist:
+            return render(request, "error.html")

@@ -13,3 +13,4 @@ from .store import Stores
 from .product import expensive_products_report
 from .product import inexpensive_products_report
 from .profile import favorite_sellers_by_customer_report
+from .order import orders_report
